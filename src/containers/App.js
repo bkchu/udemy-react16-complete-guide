@@ -1,9 +1,10 @@
-import React, { Component } from "react";
+import React, { PureComponent, Fragment } from "react";
 import classes from "./App.css";
 import Persons from "../components/Persons/Persons";
 import Cockpit from "../components/Cockpit/Cockpit";
+import withClass from "../hoc/withClass";
 
-class App extends Component {
+class App extends PureComponent {
   constructor(props) {
     super(props);
     console.log("[App.js] Inside Constructor", props);
@@ -14,7 +15,8 @@ class App extends Component {
         { id: "awef3", name: "June", age: 22 }
       ],
       otherState: "some other value",
-      showPersons: false
+      showPersons: false,
+      toggleClicked: 0
     };
   }
 
@@ -26,17 +28,17 @@ class App extends Component {
     console.log("[App.js] Inside componentDidMount()");
   }
 
-  shouldComponentUpdate(nextProps, nextState) {
-    console.log(
-      "[UPDATE App.js] Inside shouldComponentUpdate()",
-      nextProps,
-      nextState
-    );
-    return (
-      nextState.persons !== this.state.persons ||
-      nextState.showPersons !== this.state.showPersons
-    );
-  }
+  // shouldComponentUpdate(nextProps, nextState) {
+  //   console.log(
+  //     "[UPDATE App.js] Inside shouldComponentUpdate()",
+  //     nextProps,
+  //     nextState
+  //   );
+  //   return (
+  //     nextState.persons !== this.state.persons ||
+  //     nextState.showPersons !== this.state.showPersons
+  //   );
+  // }
 
   componentWillUpdate(nextProps, nextState) {
     console.log(
@@ -86,7 +88,12 @@ class App extends Component {
 
   togglePersonsHandler = () => {
     const doesShow = this.state.showPersons;
-    this.setState({ showPersons: !doesShow });
+    this.setState((prevState, props) => {
+      return {
+        showPersons: !doesShow,
+        toggleClicked: prevState.toggleClicked + 1
+      };
+    });
   };
 
   render() {
@@ -105,7 +112,7 @@ class App extends Component {
     }
 
     return (
-      <div className={classes.App}>
+      <Fragment>
         <button
           onClick={() => {
             this.setState({ showPersons: true });
@@ -120,9 +127,9 @@ class App extends Component {
           clicked={this.togglePersonsHandler}
         />
         {persons}
-      </div>
+      </Fragment>
     );
   }
 }
 
-export default App;
+export default withClass(App, classes.App);
